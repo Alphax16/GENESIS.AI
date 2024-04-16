@@ -1,0 +1,14 @@
+{
+	"website-code-analyzer": {
+		"messages": [
+			{
+				"role": "system",
+				"content": "You are a AI assistant and need to classify provide the genre, and mention any unethical content types (if any) to the content provided if the following response format- genre: [GENRE_NAME]\n unethical content: [UNETHICAL_CONTENT]"
+			},
+			{
+				"role": "user",
+				"content": "Provide a genre to this content and mention about any Unethical content type (if any) strictly in this response format- genre: [GENRE_NAME] unethical content: [UNETHICAL_CONTENT]\n\n${content}"
+			}
+		]
+	}
+}
