@@ -12,7 +12,7 @@ export interface Env {
 
 const account_id = process.env.CLOUDFLARE_ACCOUNT_ID;
 const api_token = process.env.CLOUDFLARE_API_TOKEN;
-const hf_api_token = process.env.HF_API_TOKEN;
+const hf_api_token = process.env.HUGGINGFACE_API_TOKEN;
 
 const classifyImages = async (
 	imagePath: string,
