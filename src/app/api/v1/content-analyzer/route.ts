@@ -40,24 +40,45 @@ export async function POST(
 		console.log("List of all scraped contents:");
 		console.log(scrapedContents);
 
-		await saveDataToCSV(
+		// let csvData = await saveDataToCSV(
+		// 	scrapedContents!,
+		// 	"./src/app/data/text/raw/scraped_contents.csv"
+		// );
+
+		let csvData = await saveDataToCSV(
 			scrapedContents!,
-			"./src/app/data/text/raw/scraped_contents.csv"
+			null,
+			false
 		);
+		console.log('csvData-53:', csvData);
 		console.log("Data saved successfully as CSV!");
 
-		await cleanCsv(
-			"./src/app/data/text/raw/scraped_contents.csv",
-			"./src/app/data/text/cleaned/scraped_contents.csv",
-			["Content"]
+		// await cleanCsv(
+		// 	"./src/app/data/text/raw/scraped_contents.csv",
+		// 	"./src/app/data/text/cleaned/scraped_contents.csv",
+		// 	["Content"]
+		// );
+		csvData = await cleanCsv(
+			null,
+			null,
+			["Content"],
+			csvData
 		);
+		console.log('csvData-67:', csvData);
 		console.log("CSV Data cleaned successfully!");
 
+		// const jsonData = await convertCSVtoJSON(
+		// 	"./src/app/data/text/cleaned/scraped_contents.csv"
+		// );
 		const jsonData = await convertCSVtoJSON(
-			"./src/app/data/text/cleaned/scraped_contents.csv"
+			null, null,  csvData, false
 		);
+
+		console.log('jsonData-77:', jsonData);
+
 		const content = jsonData
 			.map((data) => {
+				// @ts-ignore
 				if (data.Content !== undefined) return data.Content;
 			})
 			.filter((content) => content !== undefined);

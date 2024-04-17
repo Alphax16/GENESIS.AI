@@ -2,12 +2,7 @@
 import axios from "axios";
 import cheerio, { load } from "cheerio";
 import { fetchHTML } from "./scrape";
-
-interface Content {
-	URL: string;
-	Title: string;
-	Content: string;
-}
+import { Content } from "@/interfaces/CSVDataTypes";
 
 async function scrapeContent(url: string): Promise<Content | null> {
 	try {

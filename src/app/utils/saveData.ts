@@ -12,13 +12,29 @@ import {
 
 let serialNumber = 0;
 
-async function saveDataToCSV(data: object[], filePath: string) {
-	const csvWriter = createObjectCsvWriter({
-		path: filePath,
-		header: Object.keys(data[0]).map((key) => ({ id: key, title: key })),
-	});
-	await csvWriter.writeRecords(data);
-	console.log(`Data saved to ${filePath}`);
+async function saveDataToCSV(
+	data: object[],
+	filePath: string | null,
+	save: boolean = false
+): Promise<object[]> {
+	// Check if saving is enabled and a filePath is provided
+	if (save && filePath) {
+		const csvWriter = createObjectCsvWriter({
+			path: filePath,
+			header: Object.keys(data[0]).map((key) => ({
+				id: key,
+				title: key,
+			})),
+			append: false, // Ensures file is overwritten with new data, remove if appending is intended
+		});
+
+		// Writes data to CSV file
+		await csvWriter.writeRecords(data);
+		console.log(`Data saved to ${filePath}`);
+	}
+
+	// Returns the data as JSON
+	return data;
 }
 
 async function downloadAndSaveImage(
@@ -55,9 +71,19 @@ async function downloadAndSaveImages(
 			fs.mkdirSync(folderPath, { recursive: true });
 		}
 
-		const deletionPromises = await fs.promises.readdir(folderPath)
-            .then(files => Promise.all(files.map(async file => await fs.promises.unlink(path.join(folderPath, file)))));
-		
+		const deletionPromises = await fs.promises
+			.readdir(folderPath)
+			.then((files) =>
+				Promise.all(
+					files.map(
+						async (file) =>
+							await fs.promises.unlink(
+								path.join(folderPath, file)
+							)
+					)
+				)
+			);
+
 		console.log(`${folderPath} directory emptied successfully!`);
 
 		const downloadPromises = imageUrls.map((imageUrl) => {
