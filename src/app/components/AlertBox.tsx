@@ -30,7 +30,7 @@ const AlertBox: React.FC<AlertBoxProps> = ({ type, title, message }) => {
 
 	return (
 		<div
-			className={`font-[sans-serif] ${bgColor} ${textColor} px-4 py-4 rounded`}
+			className={`font-[sans-serif] ${bgColor} ${textColor} px-4 py-4 rounded z-50`}
 			role="alert"
 		>
 			<strong className="font-bold text-base mr-4">{title}</strong>

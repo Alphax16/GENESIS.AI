@@ -2,6 +2,7 @@
 import React from "react";
 import { useNavContext } from "@/contexts/NavContext";
 import NavItem from "./NavItem";
+import { FaGithub } from "react-icons/fa";
 
 const Navbar = () => {
 	const navItems = [
@@ -22,6 +23,12 @@ const Navbar = () => {
 			linkTo: "/about",
 		},
 	];
+
+	const gitHubRepoLink = `https://github.com/Alphax16/genesis.ai`;
+
+	const handleGitHubIconClick = () => {
+		window.open(`${gitHubRepoLink}`, "_blank", "noopener,noreferrer");
+	};
 
 	return (
 		<div>
@@ -60,6 +67,10 @@ const Navbar = () => {
 							{navItems.map((itemData, index) => (
 								<NavItem key={index + 1} index={index} linkTo={itemData.linkTo} item={itemData.item} />
 							))}
+						</ul>
+
+						<ul className="hover:cursor-pointer max-lg:border-b max-lg:py-2 pr-20 right-0 absolute" onClick={handleGitHubIconClick}>
+							<FaGithub />
 						</ul>
 					</div>
 				</div>

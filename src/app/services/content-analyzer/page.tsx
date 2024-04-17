@@ -37,11 +37,14 @@ const ContentAnalyzerPage = () => {
 				title: "Warning!",
 				message: "Please enter a URL.",
 			});
+			setTimeout(() => {
+				setAlert({ type: "", title: "", message: "" });
+			}, 5000); // Hide the alert after 5 seconds (5000 milliseconds)
 			return;
 		}
 
 		const urlRegex =
-			/^(https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}|([^\s:/?#]+\.?)+(\/[^\s]*)?)$/i;
+			/^(https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}(:\d+)?|([^\s:/?#]+\.?)+(\/[^\s]*)?)$/i;
 
 		if (!urlRegex.test(siteURL)) {
 			setAlert({
@@ -49,10 +52,12 @@ const ContentAnalyzerPage = () => {
 				title: "Error!",
 				message: "Please enter a valid URL.",
 			});
+			setTimeout(() => {
+				setAlert({ type: "", title: "", message: "" });
+			}, 5000); // Hide the alert after 5 seconds (5000 milliseconds)
 			return;
 		}
 
-		setLoading(true);
 		const fetchData = async () => {
 			try {
 				const response = await instance.post("/content-analyzer", {
@@ -60,14 +65,39 @@ const ContentAnalyzerPage = () => {
 					maxDepth,
 				});
 				const data = response.data;
-				if (data.status === 200) {
+				console.log('response.data-69:', data);
+				if (data.status === 200 && Object.keys(data.response).length !== 0 && data.classifications.length !== 0) {
 					setContentResponse({
 						genre: data.response.genre,
 						unethicalContent: data.response.unethicalContent,
 					});
 					setClassificationsData(data.classifications);
 					setShowResponse(true);
+					return data;
 				}
+				else if (Object.keys(data.response).length === 0 && data.classifications.length === 0) {
+					setAlert({
+						type: "info", title: "Info!", message: "Unable to parse the website content.",
+					});
+				}
+				else if (Object.keys(data.response).length === 0) {
+					setAlert({
+						type: "info", title: "Info!", message: "Unable to parse images in the website.",
+					});
+				}
+				else if (data.classifications.length === 0) {
+					setAlert({
+						type: "info", title: "Info!", message: "Unable to parse text contents of the website.",
+					});
+				} else {
+					return data;
+				}
+
+				setTimeout(() => {
+					setAlert({ type: "", title: "", message: "" });
+				}, 5000); // Hide the alert after 5 seconds (5000 milliseconds)
+
+				return data;
 			} catch (err) {
 				console.log("Error:", err);
 				return { error: err };
@@ -75,6 +105,9 @@ const ContentAnalyzerPage = () => {
 				setLoading(false); // Set loading state back to false
 			}
 		};
+
+		setLoading(true);
+
 		fetchData();
 	};
 
@@ -136,7 +169,7 @@ const ContentAnalyzerPage = () => {
 		});
 
 		// Save the PDF
-		pdf.save("Content_Analysis_Report.pdf");
+		pdf.save("Genesis_Content_Analysis_Report.pdf");
 	};
 
 	const handleAnalyticsBtnClick = () => {
@@ -150,7 +183,7 @@ const ContentAnalyzerPage = () => {
 	return (
 		<main className="flex min-h-screen flex-col items-center p-24">
 			<h2 className="text-3xl font-extrabold text-[#fff] inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full">
-				Website (Multi-Media) Content Anaylzer
+				Website Multi-Media Content Anaylzer
 			</h2>
 			{/* <div className="bg-cover bg-center bg-no-repeat h-screen" style={{ backgroundImage: "url('https://i.ibb.co/dP6Km46/Crawler-Image.png')" }}> */}
 			<div className="mt-20">
@@ -208,7 +241,7 @@ const ContentAnalyzerPage = () => {
 				</div>
 			</div>
 
-			<div>
+			<div className={`transition-opacity duration-500 ${alert.type ? "opacity-100" : "opacity-0"}`}>
 				{alert.type && (
 					<AlertBox
 						type={alert.type}
